@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 require("dotenv").config();
 
@@ -23,10 +23,29 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    app.post("/addpropertise", async (req, res) => {
-      const newFood = req.body;
+    const propertiseCollection = client
+      .db("propertiseDB")
+      .collection("propertiseCollection");
 
-      console.log(newFood);
+    app.get("/propertise", async (req, res) => {
+      const result = await propertiseCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/propertise/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: new ObjectId(id) };
+
+      const result = await propertiseCollection.findOne(query);
+      res.send(result);
+    });
+
+    app.post("/addpropertise", async (req, res) => {
+      const newPropertise = req.body;
+
+      const result = await propertiseCollection.insertOne(newPropertise);
+      res.send(result);
     });
 
     // Connect the client to the server	(optional starting in v4.7)
