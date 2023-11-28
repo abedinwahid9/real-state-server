@@ -28,6 +28,12 @@ async function run() {
       .collection("propertiseCollection");
 
     app.get("/propertise", async (req, res) => {
+      const query = { status: "verify" };
+
+      const result = await propertiseCollection.find(query).toArray();
+      res.send(result);
+    });
+    app.get("/allpropertise", async (req, res) => {
       const result = await propertiseCollection.find().toArray();
       res.send(result);
     });
@@ -55,6 +61,70 @@ async function run() {
       const newPropertise = req.body;
 
       const result = await propertiseCollection.insertOne(newPropertise);
+      res.send(result);
+    });
+
+    // update status
+
+    app.put("/statusupdate/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updateStatus = req.body;
+
+      const status = {
+        $set: {
+          status: updateStatus.status,
+        },
+      };
+      const result = await propertiseCollection.updateOne(
+        filter,
+        status,
+        options
+      );
+
+      res.send(result);
+    });
+
+    app.put("/update/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatePropertise = req.body;
+
+      const cart = {
+        $set: {
+          agentName: updatePropertise.agentName,
+          agentEmail: updatePropertise.agentEmail,
+          bathroom: updatePropertise.bathroom,
+          bed: updatePropertise.bed,
+          maxPrice: updatePropertise.maxPrice,
+          minPrice: updatePropertise.minPrice,
+          propertyLocation: updatePropertise.propertyLocation,
+          propertyTitle: updatePropertise.propertyTitle,
+          squareFeet: updatePropertise.squareFeet,
+          propertiseDescription: updatePropertise.propertiseDescription,
+        },
+      };
+
+      const result = await propertiseCollection.updateOne(
+        filter,
+        cart,
+        options
+      );
+
+      res.send(result);
+    });
+
+    app.delete("/propertise/:id", async (req, res) => {
+      const id = req.params.id;
+
+      console.log(id);
+
+      const query = { _id: new ObjectId(id) };
+
+      const result = await propertiseCollection.deleteOne(query);
+
       res.send(result);
     });
 
