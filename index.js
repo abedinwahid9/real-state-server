@@ -26,6 +26,9 @@ async function run() {
     const propertiseCollection = client
       .db("propertiseDB")
       .collection("propertiseCollection");
+    const reviewCollection = client
+      .db("propertiseDB")
+      .collection("reviewCollection");
 
     app.get("/propertise", async (req, res) => {
       const query = { status: "verify" };
@@ -57,10 +60,30 @@ async function run() {
       res.send(result);
     });
 
+    // reviews get
+    app.get("/allreviews", async (req, res) => {
+      const result = await reviewCollection.find().toArray();
+
+      res.send(result);
+    });
+
+    // addpropertise
+
     app.post("/addpropertise", async (req, res) => {
       const newPropertise = req.body;
 
       const result = await propertiseCollection.insertOne(newPropertise);
+      res.send(result);
+    });
+
+    // addreviews
+
+    app.post("/addreviews", async (req, res) => {
+      const newReview = req.body;
+
+      console.log(newReview);
+
+      const result = await reviewCollection.insertOne(newReview);
       res.send(result);
     });
 
