@@ -66,6 +66,15 @@ async function run() {
 
       res.send(result);
     });
+    app.get("/allreviews/details/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = { propertyId: id };
+
+      const result = await reviewCollection.find(query).toArray();
+
+      res.send(result);
+    });
 
     // addpropertise
 
@@ -142,11 +151,20 @@ async function run() {
     app.delete("/propertise/:id", async (req, res) => {
       const id = req.params.id;
 
-      console.log(id);
-
       const query = { _id: new ObjectId(id) };
 
       const result = await propertiseCollection.deleteOne(query);
+
+      res.send(result);
+    });
+
+    // reviews delete
+    app.delete("/allreviews/:id", async (req, res) => {
+      const id = req.params.id;
+
+      const query = { _id: new ObjectId(id) };
+
+      const result = await reviewCollection.deleteOne(query);
 
       res.send(result);
     });
