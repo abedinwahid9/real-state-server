@@ -29,6 +29,9 @@ async function run() {
     const reviewCollection = client
       .db("propertiseDB")
       .collection("reviewCollection");
+    const wishCollection = client
+      .db("propertiseDB")
+      .collection("wishCollection");
 
     app.get("/propertise", async (req, res) => {
       const query = { status: "verify" };
@@ -76,6 +79,18 @@ async function run() {
       res.send(result);
     });
 
+    // get wishlist
+
+    app.get("/wishlist/:email", async (req, res) => {
+      const email = req.params.email;
+
+      const query = { "userInfo.userEmail": email };
+
+      const result = await wishCollection.find(query).toArray();
+
+      res.send(result);
+    });
+
     // addpropertise
 
     app.post("/addpropertise", async (req, res) => {
@@ -85,13 +100,18 @@ async function run() {
       res.send(result);
     });
 
+    // add wishlists
+
+    app.post("/wishlist", async (req, res) => {
+      const newWish = req.body;
+      const result = await wishCollection.insertOne(newWish);
+      res.send(result);
+    });
+
     // addreviews
 
     app.post("/addreviews", async (req, res) => {
       const newReview = req.body;
-
-      console.log(newReview);
-
       const result = await reviewCollection.insertOne(newReview);
       res.send(result);
     });
